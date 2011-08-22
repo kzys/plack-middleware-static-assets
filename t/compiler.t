@@ -5,7 +5,7 @@ use Test::More;
 use_ok 'Plack::Middleware::Static::Assets::Compiler';
 
 my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
-    base_dir => 't/app/assets'
+    load_path => [ 't/app/assets' ],
 });
 my $content = $compiler->compile('hello.js');
 

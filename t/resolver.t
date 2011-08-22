@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Test::More;
 
-use Plack::Middleware::Static::Assets::Index;
 use Plack::Middleware::Static::Assets::Compiler;
 use Plack::Middleware::Static::Assets::Resolver;
 
@@ -16,7 +15,7 @@ subtest 'generate_index' => sub {
     );
 
     my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
-        base_dir => 't/app/assets',
+        load_path => [ 't/app/assets' ],
     });
     $resolver->add($compiler->publish('hello.js'));
 

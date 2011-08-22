@@ -6,7 +6,7 @@ use Path::Class;
 use Plack::Middleware::Static::Assets::Compiler;
 
 my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
-    base_dir => 't/app/assets',
+    load_path => [ 't/app/assets' ],
 });
 
 my $file = $compiler->publish('hello.js');
