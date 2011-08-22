@@ -7,7 +7,9 @@ __PACKAGE__->mk_ro_accessors(qw(load_path));
 
 use List::Util qw(first);
 use Path::Class;
+use Plack::Middleware::Static::Assets::Resolver;
 use Plack::Middleware::Static::Assets::File;
+use File::Find;
 
 sub new {
     my ($class, @rest) = @_;
@@ -52,6 +54,38 @@ sub compile {
 
     my %loaded;
     $self->_process_require($path, \%loaded);
+}
+
+=head2 compile_dir($src, $dst)
+
+=cut
+
+sub compile_dir {
+    my ($self, $src, $dst) = @_;
+
+    my $resolver = Plack::Middleware::Static::Assets::Resolver->new;
+
+    File::Find::find({
+        no_chdir => 1,
+        wanted => sub {
+            my $relative = file($File::Find::name)->relative($src);
+            if ($relative !~ /\.js$/) {
+                return;
+            }
+
+            my $file = $self->publish($relative);
+            $resolver->add($file);
+
+            my $path = file($dst, file($file->compiled_path)->relative($src));
+            $path->dir->mkpath;
+
+            my $fh = $path->openw;
+            print $fh $file->content;
+            close($fh);
+        },
+    }, $src);
+
+    return $resolver->generate_index;
 }
 
 sub publish {
