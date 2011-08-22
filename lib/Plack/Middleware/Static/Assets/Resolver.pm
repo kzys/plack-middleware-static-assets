@@ -3,9 +3,10 @@ use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast);
-__PACKAGE__->mk_ro_accessors(qw(index _files));
+__PACKAGE__->mk_ro_accessors(qw(root index _files));
 
 use Plack::Middleware::Static::Assets::File;
+use Path::Class;
 
 sub new {
     my ($class, @rest) = @_;
@@ -27,7 +28,7 @@ sub generate_index {
     my ($self, $path) = @_;
 
     my %result = map {
-        $_->path => $_->digest;
+        file($_->path)->relative($self->root) => $_->digest;
     } @{ $self->_files };
 
     return \%result;
@@ -35,6 +36,7 @@ sub generate_index {
 
 sub resolve {
     my ($self, $path) = @_;
+
     Plack::Middleware::Static::Assets::File::path_with_digest(
         $path,
         $self->index->{$path},

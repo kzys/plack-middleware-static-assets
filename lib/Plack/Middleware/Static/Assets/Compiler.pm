@@ -86,7 +86,9 @@ sub compile {
 sub compile_dir {
     my ($self, $src, $dst) = @_;
 
-    my $resolver = Plack::Middleware::Static::Assets::Resolver->new;
+    my $resolver = Plack::Middleware::Static::Assets::Resolver->new({
+        root => $src
+    });
 
     File::Find::find({
         no_chdir => 1,
@@ -96,7 +98,7 @@ sub compile_dir {
                 return;
             }
 
-            my $file = $self->publish($relative);
+            my $file = $self->publish($File::Find::name);
             $resolver->add($file);
 
             my $path = file($dst, file($file->compiled_path)->relative($src));

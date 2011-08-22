@@ -26,6 +26,21 @@ subtest 'generate_index' => sub {
     );
 };
 
+subtest 'root' => sub {
+    my $resolver = Plack::Middleware::Static::Assets::Resolver->new({
+        root => 't/app/assets'
+    });
+    my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
+        load_path => [ 't/app/assets' ],
+    });
+    $resolver->add($compiler->publish('t/app/assets/hello.js'));
+
+    is_deeply(
+        $resolver->generate_index,
+        +{ 'hello.js' => '7e051e23ce33463e49f82fecdc704540' },
+    );
+};
+
 subtest 'resolve' => sub {
     my $resolver = Plack::Middleware::Static::Assets::Resolver->new({
         index => $index
