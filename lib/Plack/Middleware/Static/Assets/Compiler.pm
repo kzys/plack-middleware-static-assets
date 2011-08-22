@@ -7,7 +7,7 @@ __PACKAGE__->mk_ro_accessors(qw(base_dir));
 
 use List::Util qw(first);
 use Path::Class;
-use Digest::MD5 qw(md5_hex);
+use Plack::Middleware::Static::Assets::File;
 
 sub new {
     my ($class, @rest) = @_;
@@ -55,10 +55,12 @@ sub publish {
     my ($self, $path) = @_;
 
     my $content = $self->compile($path);
-    my $digest = md5_hex($content);
 
     if ($path =~ /^(.*)\.(.*)$/) {
-        return ("$1-$digest.$2", $content);
+        return Plack::Middleware::Static::Assets::File->new({
+            path => $path,
+            content => $content,
+        });
     } else {
         die;
     }
