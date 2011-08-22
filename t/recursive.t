@@ -8,6 +8,7 @@ use HTTP::Request::Common;
 my $app = builder {
     mount '/public/assets/' => builder {
         enable 'Plack::Middleware::Static::Assets',
+            root => 't/app/assets',
             load_path => [ 't/app/assets' ];
     };
 };

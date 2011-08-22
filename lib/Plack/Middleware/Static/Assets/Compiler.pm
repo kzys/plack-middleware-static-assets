@@ -31,10 +31,33 @@ sub _find_file {
     } ("$name", "$name.js", "$name.css");
 }
 
+sub _resolve_with {
+    my ($self, $name, $load_path) = @_;
+
+    first {
+        -f $_
+    } map {
+        my $basename = $_;
+        map {
+            dir($_)->file($basename);
+        } @{ $self->load_path };
+    } ("$name", "$name.js", "$name.css");
+}
+
+sub _resolve {
+    my ($self, $name) = @_;
+
+    if ($name =~ /^<(.*)>$/xms) {
+        $self->_resolve_with($1, $self->load_path) || die;
+    } else {
+        die;
+    }
+}
+
 sub _process_require {
     my ($self, $name, $loaded_ref) = @_;
 
-    my $file = $self->_find_file($name) || die "Failed to find file: $name";
+    my $file = file($name);
 
     if ($loaded_ref->{ "$file" }) {
         return qq{/* $file was already loaded. */\n};
@@ -44,7 +67,7 @@ sub _process_require {
 
     my $content = $file->slurp;
     $content =~ s{^//=\s*require\s+(.*?)$}{
-        $self->_process_require($1, $loaded_ref)
+        $self->_process_require($self->_resolve($1), $loaded_ref)
     }xmsge;
     return $content;
 }

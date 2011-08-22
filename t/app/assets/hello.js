@@ -1,3 +1,3 @@
-//= require common
+//= require <common>
 
 var Hello = new Common;

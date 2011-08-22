@@ -1,3 +1,3 @@
-//= require recursive
+//= require <recursive>
 
 var recursive;

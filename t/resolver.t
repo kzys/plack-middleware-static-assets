@@ -17,12 +17,12 @@ subtest 'generate_index' => sub {
     my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
         load_path => [ 't/app/assets' ],
     });
-    $resolver->add($compiler->publish('hello.js'));
+    $resolver->add($compiler->publish('t/app/assets/hello.js'));
 
     $index = $resolver->generate_index;
     is_deeply(
         $index,
-        +{ 'hello.js' => '7e051e23ce33463e49f82fecdc704540' },
+        +{ 't/app/assets/hello.js' => '7e051e23ce33463e49f82fecdc704540' },
     );
 };
 
@@ -31,8 +31,8 @@ subtest 'resolve' => sub {
         index => $index
     });
     is(
-        $resolver->resolve('hello.js'),
-        'hello-7e051e23ce33463e49f82fecdc704540.js'
+        $resolver->resolve('t/app/assets/hello.js'),
+        't/app/assets/hello-7e051e23ce33463e49f82fecdc704540.js'
     );
 };
 

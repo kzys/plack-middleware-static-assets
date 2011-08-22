@@ -7,7 +7,7 @@ use_ok 'Plack::Middleware::Static::Assets::Compiler';
 my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
     load_path => [ 't/app/assets' ],
 });
-my $content = $compiler->compile('hello.js');
+my $content = $compiler->compile('t/app/assets/hello.js');
 
 like($content, qr/^var\s+Hello\s+=/xms);
 
