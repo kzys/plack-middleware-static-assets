@@ -1,0 +1,10 @@
+=pod
+
+=head1 Plack::Middleware::Static::Assets
+
+Plack::Middleware::Static::Assets is Rails-style JavaScript distribution library.
+
+You can see an in-development Git repository at
+L<https://github.com/kzys/plack-middleware-static-assets>.
+
+=cut
