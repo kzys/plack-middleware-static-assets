@@ -48,9 +48,9 @@ sub _resolve {
     my ($self, $name) = @_;
 
     if ($name =~ /^<(.*)>$/xms) {
-        $self->_resolve_with($1, $self->load_path) || die;
+        $self->_resolve_with($1, $self->load_path) || die "Failed to resolve $name";
     } else {
-        die;
+        die "Failed to resolve $name";
     }
 }
 
@@ -124,7 +124,7 @@ sub publish {
             content => $content,
         });
     } else {
-        die;
+        die "Failed to extract extension from $path.";
     }
 }
 
