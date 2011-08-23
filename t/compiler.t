@@ -8,7 +8,7 @@ subtest 'Compiler should return a "compiled" script file.' => sub {
     my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
         load_path => [ 't/app/assets' ],
     });
-    my $content = $compiler->compile('t/app/assets/hello.js');
+    my $content = $compiler->compile_content('t/app/assets/hello.js');
 
     like($content, qr/^var\s+Hello\s+=/xms);
 };
@@ -18,7 +18,7 @@ subtest 'Compiler should return a script file with a digest value.' => sub {
         load_path => [ 't/app/assets' ],
     });
 
-    my $file = $compiler->publish('t/app/assets/hello.js');
+    my $file = $compiler->compile('t/app/assets/hello.js');
     ok($file->content);
     is($file->digest, '7e051e23ce33463e49f82fecdc704540');
     is(

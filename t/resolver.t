@@ -17,7 +17,7 @@ subtest 'generate_index' => sub {
     my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
         load_path => [ 't/app/assets' ],
     });
-    $resolver->add($compiler->publish('t/app/assets/hello.js'));
+    $resolver->add($compiler->compile('t/app/assets/hello.js'));
 
     $index = $resolver->generate_index;
     is_deeply(
@@ -33,7 +33,7 @@ subtest 'root' => sub {
     my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
         load_path => [ 't/app/assets' ],
     });
-    $resolver->add($compiler->publish('t/app/assets/hello.js'));
+    $resolver->add($compiler->compile('t/app/assets/hello.js'));
 
     is_deeply(
         $resolver->generate_index,

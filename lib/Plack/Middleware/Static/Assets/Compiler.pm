@@ -11,6 +11,21 @@ use Plack::Middleware::Static::Assets::Resolver;
 use Plack::Middleware::Static::Assets::File;
 use File::Find;
 
+=head1 NAME
+
+Plack::Middleware::Static::Assets::Compiler
+
+=head1 DESCRIPTION
+
+Plack::Middleware::Static::Assets::Compiler compiles and concatinate
+JavaScript files.
+
+=head1 CLASS METHODS
+
+=head2 new(+{ load_path => [ $path1, $path2, ... ]})
+
+=cut
+
 sub new {
     my ($class, @rest) = @_;
     my $self = $class->SUPER::new(@rest);
@@ -76,11 +91,25 @@ sub _process_require {
     return $content;
 }
 
+=head1 INSTANCE METHODS
+
+=head2 compile($path)
+
+=cut
+
 sub compile {
     my ($self, $path) = @_;
 
-    my %loaded;
-    $self->_process_require($path, \%loaded);
+    my $content = $self->compile_content($path);
+
+    if ($path =~ /^(.*)\.(.*)$/) {
+        return Plack::Middleware::Static::Assets::File->new({
+            path => $path,
+            content => $content,
+        });
+    } else {
+        die "Failed to extract extension from $path.";
+    }
 }
 
 =head2 compile_dir($src, $dst)
@@ -102,7 +131,7 @@ sub compile_dir {
                 return;
             }
 
-            my $file = $self->publish($File::Find::name);
+            my $file = $self->compile($File::Find::name);
             $resolver->add($file);
 
             my $path = file($dst, file($file->compiled_path)->relative($src));
@@ -117,19 +146,15 @@ sub compile_dir {
     return $resolver->generate_index;
 }
 
-sub publish {
+=head2 compile_content($path)
+
+=cut
+
+sub compile_content {
     my ($self, $path) = @_;
 
-    my $content = $self->compile($path);
-
-    if ($path =~ /^(.*)\.(.*)$/) {
-        return Plack::Middleware::Static::Assets::File->new({
-            path => $path,
-            content => $content,
-        });
-    } else {
-        die "Failed to extract extension from $path.";
-    }
+    my %loaded;
+    $self->_process_require($path, \%loaded);
 }
 
 1;
