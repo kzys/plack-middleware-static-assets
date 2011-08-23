@@ -47,10 +47,14 @@ sub _resolve_with {
 sub _resolve {
     my ($self, $name) = @_;
 
+    my $e = "Failed to resolve $name";
+
     if ($name =~ /^<(.*)>$/xms) {
-        $self->_resolve_with($1, $self->load_path) || die "Failed to resolve $name";
+        $self->_resolve_with($1, $self->load_path) || die $e;
+    } elsif ($name =~ /^"(.*)"$/xms) {
+        $self->_resolve_with($1, [ file($1)->dir ]) || die $e;
     } else {
-        die "Failed to resolve $name";
+        die $e;
     }
 }
 
