@@ -39,3 +39,26 @@ sub call {
 }
 
 1;
+
+=head1 AUTHOR
+
+Kato Kazuyoshi E<lt>kato.kazuyoshi@gmail.comE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+=head2 Asset Pipeline
+
+Asset Pipeline introduced in Rails 3.1.
+
+L<http://ryanbigg.com/guides/asset_pipeline.html>
+
+=head2 Sprockets
+
+L<http://getsprockets.org/>
+
+=cut

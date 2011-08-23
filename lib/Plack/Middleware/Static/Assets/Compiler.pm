@@ -96,6 +96,9 @@ sub _process_require {
 
 =head2 compile($path)
 
+Concatinate, minify and returns a instance of
+Plack::Middleware::Static::Assets::File.
+
 =cut
 
 sub compile {
@@ -106,14 +109,29 @@ sub compile {
     if ($path =~ /^(.*)\.(.*)$/) {
         return Plack::Middleware::Static::Assets::File->new({
             path => $path,
-            content => $self->filter->($content),
+            content => $content,
         });
     } else {
         die "Failed to extract extension from $path.";
     }
 }
 
+=head2 compile_content($path)
+
+Concatinate, minify and returns a content of a script.
+
+=cut
+
+sub compile_content {
+    my ($self, $path) = @_;
+
+    my %loaded;
+    $self->filter->($self->_process_require($path, \%loaded));
+}
+
 =head2 compile_dir($src, $dst)
+
+Scan files under $src, and write files under $dst.
 
 =cut
 
@@ -145,17 +163,6 @@ sub compile_dir {
     }, $src);
 
     return $resolver->generate_index;
-}
-
-=head2 compile_content($path)
-
-=cut
-
-sub compile_content {
-    my ($self, $path) = @_;
-
-    my %loaded;
-    $self->_process_require($path, \%loaded);
 }
 
 1;
