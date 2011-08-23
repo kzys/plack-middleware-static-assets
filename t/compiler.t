@@ -27,4 +27,19 @@ subtest 'Compiler should return a script file with a digest value.' => sub {
     );
 };
 
+subtest 'Compiler should take an argument "filter" for minify.' => sub {
+    my $compiler = Plack::Middleware::Static::Assets::Compiler->new({
+        load_path => [ 't/app/assets' ],
+        filter => sub {
+            my $s = shift;
+            $s =~ s/[\r\n]+/;/xmsg;
+            $s =~ s/;+/;/xmsg;
+            $s;
+        }
+    });
+
+    my $file = $compiler->compile('t/app/assets/hello.js');
+    is($file->content, 'function Common() {;};var Hello = new Common;');
+};
+
 done_testing;

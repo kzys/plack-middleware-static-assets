@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast);
-__PACKAGE__->mk_ro_accessors(qw(load_path));
+__PACKAGE__->mk_ro_accessors(qw(load_path filter));
 
 use List::Util qw(first);
 use Path::Class;
@@ -30,6 +30,7 @@ sub new {
     my ($class, @rest) = @_;
     my $self = $class->SUPER::new(@rest);
     $self->{load_path} ||= [ '.' ];
+    $self->{filter} ||= sub { shift; };
     return $self;
 }
 
@@ -105,7 +106,7 @@ sub compile {
     if ($path =~ /^(.*)\.(.*)$/) {
         return Plack::Middleware::Static::Assets::File->new({
             path => $path,
-            content => $content,
+            content => $self->filter->($content),
         });
     } else {
         die "Failed to extract extension from $path.";
